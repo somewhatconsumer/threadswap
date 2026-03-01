@@ -2,6 +2,11 @@
   command = "npm run build"
   publish = "dist"
 
+# Vite inlines VITE_* vars into the client bundle. Supabase anon key and URL are
+# designed to be public (RLS protects data). Tell Netlify not to fail on these.
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS = "VITE_SUPABASE_ANON_KEY,VITE_SUPABASE_URL"
+
 # SPA: serve index.html for all routes so Vue Router works
 [[redirects]]
   from = "/*"
