@@ -31,13 +31,42 @@ function goToCreatePost() {
     </div>
 
     <div class="landing-hero">
-      <h1 class="hero-title animate-fade-in-up">Threadswap</h1>
-      <p class="hero-tagline animate-fade-in-up" style="animation-delay: 0.05s">Swap clothes with people near you</p>
-      <p class="hero-desc animate-fade-in-up" style="animation-delay: 0.1s">
+      <div class="wardrobe-visual animate-fade-in-up" aria-hidden="true">
+        <svg viewBox="0 0 200 220" fill="none" xmlns="http://www.w3.org/2000/svg" class="wardrobe-svg">
+          <defs>
+            <linearGradient id="wardrobe-wood" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#c4a77d"/>
+              <stop offset="50%" stop-color="#e8d5b5"/>
+              <stop offset="100%" stop-color="#b8956a"/>
+            </linearGradient>
+          </defs>
+          <!-- wardrobe cabinet -->
+          <rect x="30" y="20" width="140" height="180" rx="12" fill="url(#wardrobe-wood)" stroke="#0d9488" stroke-width="2"/>
+          <!-- left door -->
+          <rect x="38" y="32" width="62" height="160" rx="6" fill="rgba(255,255,255,0.25)" stroke="#0d9488" stroke-width="1.5"/>
+          <!-- right door -->
+          <rect x="100" y="32" width="62" height="160" rx="6" fill="rgba(255,255,255,0.25)" stroke="#0d9488" stroke-width="1.5"/>
+          <!-- door handles -->
+          <circle cx="92" cy="110" r="4" fill="#0d9488"/>
+          <circle cx="108" cy="110" r="4" fill="#0d9488"/>
+          <!-- hanger left -->
+          <path d="M55 55 L75 55 L78 72 L72 72 L70 85 L60 85 L58 72 Z" fill="#0d9488" opacity="0.9"/>
+          <!-- hanger right -->
+          <path d="M125 55 L145 55 L148 72 L142 72 L140 85 L130 85 L128 72 Z" fill="#0d9488" opacity="0.9"/>
+          <!-- little clothes on hangers -->
+          <ellipse cx="65" cy="78" rx="12" ry="8" fill="#f59e0b" opacity="0.85"/>
+          <ellipse cx="135" cy="78" rx="12" ry="8" fill="#ec4899" opacity="0.85"/>
+          <!-- base / feet -->
+          <rect x="25" y="198" width="150" height="14" rx="4" fill="url(#wardrobe-wood)" stroke="#0d9488" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <h1 class="hero-title animate-fade-in-up" style="animation-delay: 0.03s">Second Wardrobe</h1>
+      <p class="hero-tagline animate-fade-in-up" style="animation-delay: 0.08s">Swap clothes with people near you</p>
+      <p class="hero-desc animate-fade-in-up" style="animation-delay: 0.12s">
         Post what you have, set your location on the map, and discover others who want to swap. Simple and local.
       </p>
 
-      <div class="hero-actions animate-fade-in-up" style="animation-delay: 0.2s">
+      <div class="hero-actions animate-fade-in-up" style="animation-delay: 0.22s">
         <button type="button" class="btn btn-primary" @click="goToMap">
           Browse the map
         </button>
@@ -51,7 +80,7 @@ function goToCreatePost() {
         </button>
       </div>
 
-      <div class="feature-pills animate-fade-in-up" style="animation-delay: 0.25s">
+      <div class="feature-pills animate-fade-in-up" style="animation-delay: 0.28s">
         <span class="pill">Map-based</span>
         <span class="pill">Local swaps</span>
         <span class="pill">Messages</span>
@@ -165,6 +194,19 @@ function goToCreatePost() {
   max-width: 28rem;
   position: relative;
   z-index: 1;
+}
+
+.wardrobe-visual {
+  margin: 0 auto 1.5rem;
+  width: 160px;
+  flex-shrink: 0;
+}
+
+.wardrobe-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 8px 24px rgba(13, 148, 136, 0.2));
 }
 
 .hero-title {

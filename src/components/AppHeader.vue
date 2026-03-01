@@ -41,9 +41,9 @@ async function handleSignOut() {
 </script>
 
 <template>
-  <header class="threadswap-header">
-    <button type="button" class="logo" aria-label="Threadswap home" @click="goHome">
-      Threadswap
+  <header class="second-wardrobe-header">
+    <button type="button" class="logo" aria-label="Second Wardrobe home" @click="goHome">
+      Second Wardrobe
     </button>
     <nav class="nav">
       <router-link :to="{ name: 'map' }" class="nav-link">Map</router-link>
@@ -53,7 +53,7 @@ async function handleSignOut() {
         class="nav-link nav-btn"
         @click="goCreatePost"
       >
-        Create post
+        Create Post
       </button>
       <button
         v-if="auth.isLoggedIn"
@@ -79,7 +79,7 @@ async function handleSignOut() {
 </template>
 
 <style scoped>
-.threadswap-header {
+.second-wardrobe-header {
   display: flex;
   align-items: center;
   justify-content: space-between;

@@ -8,7 +8,7 @@ const router = createRouter({
       path: '/',
       name: 'landing',
       component: () => import('@/views/LandingView.vue'),
-      meta: { title: 'Threadswap' },
+      meta: { title: 'Second Wardrobe' },
     },
     {
       path: '/map',
