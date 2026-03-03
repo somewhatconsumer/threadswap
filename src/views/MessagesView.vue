@@ -395,4 +395,36 @@ function formatTime(iso: string) {
   border: none;
   cursor: pointer;
 }
+
+@media (max-width: 640px) {
+  .messages-view {
+    flex-direction: column;
+    height: auto;
+    min-height: calc(100vh - 56px);
+  }
+
+  .conversations-list {
+    width: 100%;
+    max-height: 220px;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .chat-panel {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .messages-list {
+    padding: 0.75rem;
+  }
+
+  .message-bubble {
+    max-width: 85%;
+  }
+
+  .chat-input-wrap {
+    padding: 0.75rem;
+  }
+}
 </style>
