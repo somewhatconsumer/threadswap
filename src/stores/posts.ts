@@ -14,9 +14,11 @@ export const usePostsStore = defineStore('posts', () => {
     loading.value = true
     error.value = null
     try {
+      const now = new Date().toISOString()
       const { data, error: fetchError } = await supabase
         .from('posts')
         .select('*')
+        .gt('expires_at', now)
         .order('created_at', { ascending: false })
       if (fetchError) throw fetchError
       posts.value = (data ?? []) as Post[]
@@ -29,10 +31,12 @@ export const usePostsStore = defineStore('posts', () => {
   }
 
   async function fetchPost(id: string): Promise<Post | null> {
+    const now = new Date().toISOString()
     const { data, error: err } = await supabase
       .from('posts')
       .select('*')
       .eq('id', id)
+      .gt('expires_at', now)
       .single()
     if (err) return null
     return data as Post

@@ -20,53 +20,52 @@ function goToCreatePost() {
 
 <template>
   <div class="landing-view">
-    <div class="landing-bg">
-      <div class="gradient-orb orb-1" />
-      <div class="gradient-orb orb-2" />
-      <div class="gradient-orb orb-3" />
-      <div class="gradient-orb orb-4" />
-      <div class="gradient-orb orb-5" />
-      <div class="mesh-gradient" />
-      <div class="noise-overlay" />
+    <!-- Minimal background: soft gradient only -->
+    <div class="landing-bg" aria-hidden="true">
+      <div class="bg-gradient" />
     </div>
 
     <div class="landing-hero">
+      <!-- Wardrobe logo: larger, cozy, clearly a wardrobe -->
       <div class="wardrobe-visual animate-fade-in-up" aria-hidden="true">
         <svg viewBox="0 0 200 220" fill="none" xmlns="http://www.w3.org/2000/svg" class="wardrobe-svg">
           <defs>
             <linearGradient id="wardrobe-wood" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="#c4a77d"/>
-              <stop offset="50%" stop-color="#e8d5b5"/>
-              <stop offset="100%" stop-color="#b8956a"/>
+              <stop offset="0%" stop-color="#e8e4df"/>
+              <stop offset="50%" stop-color="#f5f3f0"/>
+              <stop offset="100%" stop-color="#ddd9d3"/>
             </linearGradient>
+            <linearGradient id="wardrobe-door" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="rgba(255,255,255,0.5)"/>
+              <stop offset="100%" stop-color="rgba(255,255,255,0.2)"/>
+            </linearGradient>
+            <filter id="wardrobe-shadow" x="-10%" y="-5%" width="120%" height="115%">
+              <feDropShadow dx="0" dy="4" stdDeviation="8" flood-opacity="0.08"/>
+            </filter>
           </defs>
-          <!-- wardrobe cabinet -->
-          <rect x="30" y="20" width="140" height="180" rx="12" fill="url(#wardrobe-wood)" stroke="#0d9488" stroke-width="2"/>
-          <!-- left door -->
-          <rect x="38" y="32" width="62" height="160" rx="6" fill="rgba(255,255,255,0.25)" stroke="#0d9488" stroke-width="1.5"/>
-          <!-- right door -->
-          <rect x="100" y="32" width="62" height="160" rx="6" fill="rgba(255,255,255,0.25)" stroke="#0d9488" stroke-width="1.5"/>
-          <!-- door handles -->
-          <circle cx="92" cy="110" r="4" fill="#0d9488"/>
-          <circle cx="108" cy="110" r="4" fill="#0d9488"/>
-          <!-- hanger left -->
-          <path d="M55 55 L75 55 L78 72 L72 72 L70 85 L60 85 L58 72 Z" fill="#0d9488" opacity="0.9"/>
-          <!-- hanger right -->
-          <path d="M125 55 L145 55 L148 72 L142 72 L140 85 L130 85 L128 72 Z" fill="#0d9488" opacity="0.9"/>
-          <!-- little clothes on hangers -->
-          <ellipse cx="65" cy="78" rx="12" ry="8" fill="#f59e0b" opacity="0.85"/>
-          <ellipse cx="135" cy="78" rx="12" ry="8" fill="#ec4899" opacity="0.85"/>
-          <!-- base / feet -->
-          <rect x="25" y="198" width="150" height="14" rx="4" fill="url(#wardrobe-wood)" stroke="#0d9488" stroke-width="1.5"/>
+          <!-- Main cabinet body - cozy rounded shape -->
+          <rect x="24" y="16" width="152" height="172" rx="20" fill="url(#wardrobe-wood)" stroke="var(--neutral-200)" stroke-width="1.5" filter="url(#wardrobe-shadow)"/>
+          <!-- Top cap / molding -->
+          <rect x="20" y="12" width="160" height="12" rx="6" fill="url(#wardrobe-wood)" stroke="var(--neutral-200)" stroke-width="1"/>
+          <!-- Left door -->
+          <rect x="32" y="32" width="68" height="148" rx="14" fill="url(#wardrobe-door)" stroke="var(--neutral-200)" stroke-width="1.25"/>
+          <!-- Right door -->
+          <rect x="100" y="32" width="68" height="148" rx="14" fill="url(#wardrobe-door)" stroke="var(--neutral-200)" stroke-width="1.25"/>
+          <!-- Door handles - accent -->
+          <circle cx="88" cy="100" r="6" fill="var(--accent)" stroke="white" stroke-width="1.5"/>
+          <circle cx="112" cy="100" r="6" fill="var(--accent)" stroke="white" stroke-width="1.5"/>
+          <!-- Base / feet -->
+          <rect x="18" y="186" width="164" height="20" rx="10" fill="url(#wardrobe-wood)" stroke="var(--neutral-200)" stroke-width="1.25"/>
         </svg>
       </div>
-      <h1 class="hero-title animate-fade-in-up" style="animation-delay: 0.03s">Second Wardrobe</h1>
-      <p class="hero-tagline animate-fade-in-up" style="animation-delay: 0.08s">Swap clothes with people near you</p>
-      <p class="hero-desc animate-fade-in-up" style="animation-delay: 0.12s">
+
+      <h1 class="hero-title animate-fade-in-up" style="animation-delay: 0.05s">Second Wardrobe</h1>
+      <p class="hero-tagline animate-fade-in-up" style="animation-delay: 0.1s">Swap clothes with people near you</p>
+      <p class="hero-desc animate-fade-in-up" style="animation-delay: 0.15s">
         Post what you have, set your location on the map, and discover others who want to swap. Simple and local.
       </p>
 
-      <div class="hero-actions animate-fade-in-up" style="animation-delay: 0.22s">
+      <div class="hero-actions animate-fade-in-up" style="animation-delay: 0.25s">
         <button type="button" class="btn btn-primary" @click="goToMap">
           Browse the map
         </button>
@@ -80,7 +79,7 @@ function goToCreatePost() {
         </button>
       </div>
 
-      <div class="feature-pills animate-fade-in-up" style="animation-delay: 0.28s">
+      <div class="feature-pills animate-fade-in-up" style="animation-delay: 0.3s">
         <span class="pill">Map-based</span>
         <span class="pill">Local swaps</span>
         <span class="pill">Messages</span>
@@ -90,7 +89,7 @@ function goToCreatePost() {
     <footer class="landing-footer">
       <router-link :to="{ name: 'map' }">Map</router-link>
       <span v-if="auth.isLoggedIn">·</span>
-      <router-link v-if="auth.isLoggedIn" :to="{ name: 'create-post' }">Create post</router-link>
+      <router-link v-if="auth.isLoggedIn" :to="{ name: 'create-post' }">Create Post</router-link>
       <span v-if="auth.isLoggedIn">·</span>
       <router-link v-if="auth.isLoggedIn" :to="{ name: 'profile' }">Profile</router-link>
       <template v-else>
@@ -107,7 +106,7 @@ function goToCreatePost() {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 2rem 1rem 4rem;
+  padding: 3rem 1.5rem 5rem;
   position: relative;
   overflow: hidden;
 }
@@ -118,87 +117,39 @@ function goToCreatePost() {
   pointer-events: none;
 }
 
-.mesh-gradient {
+.bg-gradient {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 80% 50% at 20% 40%, rgba(13, 148, 136, 0.15) 0%, transparent 50%),
-    radial-gradient(ellipse 60% 40% at 80% 60%, rgba(245, 158, 11, 0.12) 0%, transparent 50%),
-    radial-gradient(ellipse 50% 30% at 50% 90%, rgba(99, 102, 241, 0.1) 0%, transparent 45%);
-  background-size: 200% 200%;
-  animation: gradient-drift 18s ease-in-out infinite;
+    radial-gradient(ellipse 70% 50% at 50% 0%, var(--accent-muted) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(148, 163, 184, 0.08) 0%, transparent 50%);
 }
 
-.gradient-orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(70px);
-  opacity: 0.5;
-  will-change: transform;
-}
-
-.orb-1 {
-  width: 320px;
-  height: 320px;
-  background: rgba(13, 148, 136, 0.4);
-  top: -100px;
-  left: -80px;
-  animation: float-slow 20s ease-in-out infinite;
-}
-
-.orb-2 {
-  width: 280px;
-  height: 280px;
-  background: rgba(245, 158, 11, 0.35);
-  top: 40%;
-  right: -60px;
-  animation: float-slower 25s ease-in-out infinite reverse;
-}
-
-.orb-3 {
-  width: 240px;
-  height: 240px;
-  background: rgba(99, 102, 241, 0.3);
-  bottom: -40px;
-  left: 20%;
-  animation: float-slow 22s ease-in-out infinite 2s;
-}
-
-.orb-4 {
-  width: 180px;
-  height: 180px;
-  background: rgba(236, 72, 153, 0.25);
-  top: 60%;
-  left: 10%;
-  animation: pulse-soft 8s ease-in-out infinite;
-}
-
-.orb-5 {
-  width: 200px;
-  height: 200px;
-  background: rgba(34, 211, 238, 0.25);
-  top: 15%;
-  right: 25%;
-  animation: float-slower 18s ease-in-out infinite 1s;
-}
-
-.noise-overlay {
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-  mix-blend-mode: overlay;
-}
-
+/* High whitespace: hero in glass card */
 .landing-hero {
   text-align: center;
   max-width: 28rem;
   position: relative;
   z-index: 1;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-card);
+  padding: 3rem 2rem;
+  transition: box-shadow var(--transition-smooth);
 }
 
+.landing-hero:hover {
+  box-shadow: var(--shadow-card-hover);
+}
+
+/* Wardrobe logo*/
 .wardrobe-visual {
-  margin: 0 auto 1.5rem;
+  margin: 0 auto 2rem;
   width: 160px;
+  height: auto;
   flex-shrink: 0;
 }
 
@@ -206,35 +157,33 @@ function goToCreatePost() {
   width: 100%;
   height: auto;
   display: block;
-  filter: drop-shadow(0 8px 24px rgba(13, 148, 136, 0.2));
 }
 
+/* Typography: clean, neutral */
 .hero-title {
   margin: 0 0 0.5rem;
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: 700;
-  background: linear-gradient(135deg, #0d9488 0%, #0f766e 50%, #1f2937 100%);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
+  color: var(--text);
+  line-height: 1.2;
 }
 
 .hero-tagline {
-  margin: 0 0 1rem;
-  font-size: 1.25rem;
+  margin: 0 0 0.75rem;
+  font-size: 1.125rem;
+  font-weight: 500;
   color: var(--text);
-  font-weight: 600;
 }
 
 .hero-desc {
-  margin: 0 0 2rem;
-  font-size: 1rem;
+  margin: 0 0 2.5rem;
+  font-size: 0.9375rem;
   color: var(--text-muted);
   line-height: 1.6;
 }
 
+/* Buttons: micro-interactions */
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
@@ -246,39 +195,43 @@ function goToCreatePost() {
 .btn {
   padding: 0.75rem 1.5rem;
   border-radius: var(--radius-btn);
-  font-size: 1rem;
+  font-size: 0.9375rem;
   font-weight: 600;
   cursor: pointer;
   border: none;
-  transition: transform var(--transition-smooth), box-shadow var(--transition-smooth);
+  transition: transform var(--transition-fast), box-shadow var(--transition-smooth), background-color var(--transition-smooth);
 }
 
-.btn:hover {
-  transform: translateY(-2px);
+.btn:active {
+  transform: scale(0.98);
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #0d9488, #0f766e);
+  background: var(--accent);
   color: white;
-  box-shadow: 0 4px 14px rgba(13, 148, 136, 0.4);
+  box-shadow: var(--shadow-sm);
 }
 
 .btn-primary:hover {
-  box-shadow: 0 6px 20px rgba(13, 148, 136, 0.5);
+  background: var(--accent-hover);
+  box-shadow: var(--shadow-card);
 }
 
 .btn-secondary {
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--surface-elevated);
   color: var(--accent);
-  border: 2px solid var(--accent);
-  backdrop-filter: blur(8px);
+  border: 1px solid var(--neutral-200);
+  box-shadow: var(--shadow-xs);
 }
 
 .btn-secondary:hover {
-  background: white;
-  box-shadow: 0 4px 14px rgba(13, 148, 136, 0.2);
+  background: var(--neutral-50);
+  border-color: var(--accent);
+  color: var(--accent-hover);
+  box-shadow: var(--shadow-sm);
 }
 
+/* Pills: subtle, glass-like */
 .feature-pills {
   display: flex;
   flex-wrap: wrap;
@@ -287,26 +240,27 @@ function goToCreatePost() {
 }
 
 .pill {
-  padding: 0.45rem 0.9rem;
+  padding: 0.4rem 0.875rem;
   border-radius: 9999px;
-  font-size: 0.85rem;
+  font-size: 0.8125rem;
   font-weight: 500;
-  background: rgba(255, 255, 255, 0.85);
-  color: var(--text);
-  border: 1px solid rgba(13, 148, 136, 0.3);
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid var(--border-subtle);
   backdrop-filter: blur(8px);
-  transition: background var(--transition-smooth), transform var(--transition-smooth);
+  transition: color var(--transition-smooth), border-color var(--transition-smooth), background var(--transition-smooth);
 }
 
 .pill:hover {
-  background: rgba(255, 255, 255, 0.95);
-  transform: translateY(-1px);
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.9);
+  border-color: var(--neutral-300);
 }
 
 .landing-footer {
   margin-top: auto;
   padding-top: 3rem;
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   color: var(--text-muted);
   position: relative;
   z-index: 1;
@@ -315,10 +269,11 @@ function goToCreatePost() {
 .landing-footer a {
   color: var(--accent);
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 500;
+  transition: color var(--transition-fast);
 }
 
 .landing-footer a:hover {
-  text-decoration: underline;
+  color: var(--accent-hover);
 }
 </style>

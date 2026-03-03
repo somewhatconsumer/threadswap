@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, onUnmounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { usePostsStore } from '@/stores/posts'
@@ -15,6 +15,13 @@ const post = ref<Post | null>(null)
 const loading = ref(true)
 const error = ref('')
 
+const lightboxOpen = ref(false)
+const lightboxIndex = ref(0)
+const lightboxZoom = ref(1)
+const minZoom = 0.5
+const maxZoom = 4
+const zoomStep = 0.25
+
 const imageUrls = computed(() => {
   const p = post.value
   if (!p?.image_urls?.length) return []
@@ -23,6 +30,56 @@ const imageUrls = computed(() => {
     return data.publicUrl
   })
 })
+
+function openLightbox(index: number) {
+  lightboxIndex.value = index
+  lightboxZoom.value = 1
+  lightboxOpen.value = true
+  window.addEventListener('keydown', onLightboxKeydown)
+}
+
+function closeLightbox() {
+  lightboxOpen.value = false
+  window.removeEventListener('keydown', onLightboxKeydown)
+}
+
+function lightboxPrev() {
+  if (imageUrls.value.length <= 1) return
+  lightboxIndex.value = (lightboxIndex.value - 1 + imageUrls.value.length) % imageUrls.value.length
+  lightboxZoom.value = 1
+}
+
+function lightboxNext() {
+  if (imageUrls.value.length <= 1) return
+  lightboxIndex.value = (lightboxIndex.value + 1) % imageUrls.value.length
+  lightboxZoom.value = 1
+}
+
+function lightboxZoomIn() {
+  lightboxZoom.value = Math.min(maxZoom, lightboxZoom.value + zoomStep)
+}
+
+function lightboxZoomOut() {
+  lightboxZoom.value = Math.max(minZoom, lightboxZoom.value - zoomStep)
+}
+
+function lightboxZoomReset() {
+  lightboxZoom.value = 1
+}
+
+function onLightboxWheel(e: WheelEvent) {
+  if (!lightboxOpen.value) return
+  e.preventDefault()
+  if (e.deltaY < 0) lightboxZoomIn()
+  else if (e.deltaY > 0) lightboxZoomOut()
+}
+
+function onLightboxKeydown(e: KeyboardEvent) {
+  if (!lightboxOpen.value) return
+  if (e.key === 'Escape') closeLightbox()
+  if (e.key === 'ArrowLeft') lightboxPrev()
+  if (e.key === 'ArrowRight') lightboxNext()
+}
 
 onMounted(async () => {
   const id = route.params.id as string
@@ -35,6 +92,15 @@ onMounted(async () => {
   post.value = p ?? null
   if (!p) error.value = 'Post not found'
   loading.value = false
+})
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', onLightboxKeydown)
+  document.body.style.overflow = ''
+})
+
+watch(lightboxOpen, (open) => {
+  document.body.style.overflow = open ? 'hidden' : ''
 })
 
 function goMessage() {
@@ -76,6 +142,12 @@ function displayCategories(p: Post | null): string {
           :key="i"
           :src="url"
           :alt="`${post.title} image ${i + 1}`"
+          class="gallery-img"
+          role="button"
+          tabindex="0"
+          @click="openLightbox(i)"
+          @keydown.enter="openLightbox(i)"
+          @keydown.space.prevent="openLightbox(i)"
         />
       </div>
       <div v-if="imageUrls.length === 0" class="post-gallery placeholder">No images</div>
@@ -98,6 +170,59 @@ function displayCategories(p: Post | null): string {
         </button>
       </div>
     </article>
+
+    <!-- Lightbox -->
+    <Teleport to="body">
+      <div
+        v-if="lightboxOpen && post"
+        class="lightbox-overlay"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Image viewer"
+        @click.self="closeLightbox"
+      >
+        <button type="button" class="lightbox-close" aria-label="Close" @click="closeLightbox">×</button>
+
+        <button
+          v-if="imageUrls.length > 1"
+          type="button"
+          class="lightbox-nav lightbox-prev"
+          aria-label="Previous image"
+          @click="lightboxPrev"
+        >
+          ‹
+        </button>
+        <button
+          v-if="imageUrls.length > 1"
+          type="button"
+          class="lightbox-nav lightbox-next"
+          aria-label="Next image"
+          @click="lightboxNext"
+        >
+          ›
+        </button>
+
+        <div class="lightbox-image-wrap" @click.self="closeLightbox" @wheel.prevent="onLightboxWheel">
+          <img
+            :src="imageUrls[lightboxIndex]"
+            :alt="`${post.title} image ${lightboxIndex + 1}`"
+            class="lightbox-image"
+            :style="{ transform: `scale(${lightboxZoom})` }"
+            draggable="false"
+            @click.stop
+          />
+        </div>
+
+        <div class="lightbox-toolbar">
+          <button type="button" class="lightbox-zoom-btn" aria-label="Zoom out" @click="lightboxZoomOut">−</button>
+          <span class="lightbox-zoom-label">{{ Math.round(lightboxZoom * 100) }}%</span>
+          <button type="button" class="lightbox-zoom-btn" aria-label="Zoom in" @click="lightboxZoomIn">+</button>
+          <button type="button" class="lightbox-zoom-btn reset" @click="lightboxZoomReset">Reset</button>
+        </div>
+
+        <p v-if="imageUrls.length > 1" class="lightbox-counter">{{ lightboxIndex + 1 }} / {{ imageUrls.length }}</p>
+      </div>
+    </Teleport>
   </div>
 </template>
 
@@ -140,6 +265,14 @@ function displayCategories(p: Post | null): string {
   object-fit: cover;
   border-radius: 0.75rem;
   flex-shrink: 0;
+}
+
+.post-gallery .gallery-img {
+  cursor: pointer;
+}
+
+.post-gallery .gallery-img:hover {
+  opacity: 0.95;
 }
 
 .post-gallery.placeholder {
@@ -226,5 +359,154 @@ function displayCategories(p: Post | null): string {
 
 .btn-delete:hover {
   background: #fef2f2;
+}
+
+/* Lightbox */
+.lightbox-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 4rem 5rem;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  font-size: 1.75rem;
+  line-height: 1;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background 0.2s;
+}
+
+.lightbox-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3rem;
+  height: 3rem;
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  font-size: 2.5rem;
+  line-height: 1;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background 0.2s;
+}
+
+.lightbox-nav:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.lightbox-prev {
+  left: 1rem;
+}
+
+.lightbox-next {
+  right: 1rem;
+}
+
+.lightbox-image-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  padding: 1rem;
+}
+
+.lightbox-image {
+  max-width: 100%;
+  max-height: calc(100vh - 10rem);
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  transform-origin: center center;
+  transition: transform 0.15s ease-out;
+  user-select: none;
+  pointer-events: none;
+}
+
+.lightbox-toolbar {
+  position: absolute;
+  bottom: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 9999px;
+}
+
+.lightbox-zoom-btn {
+  width: 2.25rem;
+  height: 2.25rem;
+  border: none;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 1.25rem;
+  line-height: 1;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: background 0.2s;
+}
+
+.lightbox-zoom-btn:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.lightbox-zoom-btn.reset {
+  width: auto;
+  padding: 0 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  margin-left: 0.25rem;
+}
+
+.lightbox-zoom-label {
+  min-width: 3rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.lightbox-counter {
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  margin: 0;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
 }
 </style>

@@ -17,6 +17,12 @@ const router = createRouter({
       meta: { title: 'Map' },
     },
     {
+      path: '/nearby',
+      name: 'nearby-swaps',
+      component: () => import('@/views/NearbySwapsView.vue'),
+      meta: { title: 'Nearby Swaps' },
+    },
+    {
       path: '/auth',
       name: 'auth',
       component: () => import('@/views/AuthView.vue'),
@@ -51,6 +57,12 @@ const router = createRouter({
       name: 'profile',
       component: () => import('@/views/ProfileView.vue'),
       meta: { title: 'Profile', requiresAuth: true },
+    },
+    {
+      path: '/contact',
+      name: 'contact',
+      component: () => import('@/views/ContactView.vue'),
+      meta: { title: 'Contact' },
     },
   ],
 })

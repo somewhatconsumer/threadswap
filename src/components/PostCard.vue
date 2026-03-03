@@ -49,7 +49,7 @@ function onMessage() {
         v-if="showMessage"
         type="button"
         class="btn-message"
-        @click="onMessage"
+        @click.stop="onMessage"
       >
         Message
       </button>
@@ -59,16 +59,22 @@ function onMessage() {
 
 <style scoped>
 .post-card {
-  background: var(--surface-elevated, #fce7f3);
+  background: var(--surface-elevated);
   border-radius: var(--radius-card);
   overflow: hidden;
   box-shadow: var(--shadow-card);
+  border: 1px solid var(--border-subtle);
+  transition: box-shadow var(--transition-smooth), border-color var(--transition-smooth);
+}
+
+.post-card:hover {
+  box-shadow: var(--shadow-card-hover);
 }
 
 .post-card-image {
   aspect-ratio: 1;
   overflow: hidden;
-  background: var(--border);
+  background: var(--neutral-100);
 }
 
 .post-card-image img {
@@ -111,13 +117,22 @@ function onMessage() {
 
 .btn-message {
   margin-top: 0.75rem;
-  padding: 0.4rem 0.75rem;
+  padding: 0.5rem 0.875rem;
   border-radius: var(--radius-btn);
-  font-size: 0.9rem;
+  font-size: 0.875rem;
   font-weight: 600;
   background: var(--accent);
   color: white;
   border: none;
   cursor: pointer;
+  transition: background var(--transition-fast), transform var(--transition-fast);
+}
+
+.btn-message:hover {
+  background: var(--accent-hover);
+}
+
+.btn-message:active {
+  transform: scale(0.98);
 }
 </style>

@@ -121,6 +121,7 @@ async function submit() {
     <div class="create-card">
       <h1 class="title">New swap post</h1>
       <p class="subtitle">Add photos, categories, and pin your location on the map.</p>
+      <p class="expiry-hint">Listings are automatically removed after 2 weeks.</p>
 
       <form class="form" @submit.prevent="submit">
         <div v-if="error" class="error-msg" role="alert">{{ error }}</div>
@@ -181,9 +182,15 @@ async function submit() {
 }
 
 .subtitle {
-  margin: 0 0 1.5rem;
+  margin: 0 0 0.25rem;
   color: var(--text-muted);
   font-size: 0.9rem;
+}
+
+.expiry-hint {
+  margin: 0 0 1.5rem;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
 }
 
 .form {

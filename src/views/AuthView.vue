@@ -28,18 +28,6 @@ async function handleGoogle() {
   }
 }
 
-async function handleApple() {
-  error.value = ''
-  loading.value = true
-  try {
-    await auth.signInWithApple()
-  } catch (e) {
-    error.value = e instanceof Error ? e.message : 'Sign in failed'
-  } finally {
-    loading.value = false
-  }
-}
-
 async function handleEmail() {
   error.value = ''
   if (!email.value.trim()) {
@@ -97,26 +85,10 @@ function toggleMode() {
         >
           Continue with Google
         </button>
-        <button
-          type="button"
-          class="btn btn-apple"
-          :disabled="loading"
-          @click="handleApple"
-        >
-          Continue with Apple
-        </button>
 
         <div class="divider">or</div>
 
         <form class="email-form" @submit.prevent="handleEmail">
-          <input
-            v-model="displayName"
-            type="text"
-            placeholder="Display name (optional)"
-            class="input"
-            autocomplete="name"
-            :disabled="loading"
-          />
           <input
             v-model="email"
             type="email"
@@ -210,12 +182,6 @@ function toggleMode() {
 
 .btn-google {
   background: var(--surface);
-}
-
-.btn-apple {
-  background: #000;
-  color: #fff;
-  border-color: #000;
 }
 
 .btn-primary {
