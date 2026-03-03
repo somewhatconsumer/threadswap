@@ -36,7 +36,10 @@ Under **Authentication → Providers**:
 
 - **Email**: Enable. Turn off "Confirm email" for development if you prefer, or configure SMTP for production.
 - **Google**: Enable and add your OAuth client ID and secret from Google Cloud Console.
-- **Apple**: Enable and add your Apple Service ID, secret key, etc. (Requires Apple Developer account.)
+
+**Redirect URLs:** Under **Authentication → URL Configuration**, add every URL where users can sign in or land after email confirmation (e.g. `http://localhost:5173/` for dev and `https://your-app.netlify.app/` for production). If the production URL is missing, Supabase falls back to **Site URL** (often localhost), so both Google OAuth and email confirmation links will redirect to the wrong place.
+
+For production, set **Site URL** to your production URL and add the same URL to **Redirect URLs**, or set `VITE_APP_URL` in your build (see below) and add that exact URL to Redirect URLs.
 
 ## 5. Environment variables
 
@@ -46,5 +49,7 @@ Create `.env.local` in the project root:
 VITE_SUPABASE_URL=https://your-project.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-key
 ```
+
+For production (e.g. Netlify), set **VITE_APP_URL** to your canonical app URL (e.g. `https://your-app.netlify.app`) so email confirmation and OAuth redirect back to the deployed site. Add that URL (with trailing slash) to Supabase **Redirect URLs**.
 
 Do not commit `.env.local`; it is typically in `.gitignore`.

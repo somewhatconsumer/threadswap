@@ -50,23 +50,28 @@ export const useAuthStore = defineStore('auth', () => {
     profile.value = data as Profile
   }
 
-  async function signInWithGoogle() {
-    const { error } = await supabase.auth.signInWithOAuth({ provider: 'google' })
-    if (error) throw error
+  function getRedirectUrl(): string | undefined {
+    const base = import.meta.env.VITE_APP_URL
+    if (base) return base.replace(/\/$/, '') + '/'
+    if (typeof window !== 'undefined') return `${window.location.origin}/`
+    return undefined
   }
 
-  async function signInWithApple() {
-    const { error } = await supabase.auth.signInWithOAuth({ provider: 'apple' })
+  async function signInWithGoogle() {
+    const redirectTo = getRedirectUrl()
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: redirectTo ? { redirectTo } : undefined,
+    })
     if (error) throw error
   }
 
   async function signUpWithEmail(email: string, password: string, displayName?: string) {
+    const emailRedirectTo = getRedirectUrl()
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        data: { full_name: displayName }
-      }
+      options: emailRedirectTo ? { emailRedirectTo } : undefined,
     })
     if (error) throw error
     return data
@@ -103,7 +108,6 @@ export const useAuthStore = defineStore('auth', () => {
     init,
     refreshProfile,
     signInWithGoogle,
-    signInWithApple,
     signUpWithEmail,
     signInWithEmail,
     signOut,
