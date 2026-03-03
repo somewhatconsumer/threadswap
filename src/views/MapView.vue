@@ -6,6 +6,7 @@ import { getCurrentPosition } from '@/lib/geolocation'
 import { distanceMeters } from '@/lib/distance'
 import MapCanvas from '@/components/MapCanvas.vue'
 import RadiusFilter from '@/components/RadiusFilter.vue'
+import { geocodeAddress, suggestAddresses, type GeocodeResult } from '@/lib/geocoding'
 import type { Post } from '@/types/database'
 import type { PostWithAvatar } from '@/stores/posts'
 
@@ -17,6 +18,11 @@ const userPosition = ref<{ lat: number; lng: number } | null>(null)
 const radiusKm = ref(25)
 const mapReady = ref(false)
 const avatarByUserId = ref<Record<string, string | null>>({})
+const searchQuery = ref('')
+const searching = ref(false)
+const searchError = ref('')
+const suggestions = ref<GeocodeResult[]>([])
+let debounceId: number | undefined
 
 const postsInRadius = computed<Post[]>(() => {
   const list = postsStore.posts
@@ -59,12 +65,104 @@ watch(userPosition, (pos) => {
 function onMessage(post: Post) {
   router.push({ name: 'messages', query: { postId: post.id } })
 }
+
+watch(
+  searchQuery,
+  (q) => {
+    if (debounceId) {
+      window.clearTimeout(debounceId)
+      debounceId = undefined
+    }
+    const trimmed = q.trim()
+    if (!trimmed || trimmed.length < 3) {
+      suggestions.value = []
+      searchError.value = ''
+      return
+    }
+    debounceId = window.setTimeout(async () => {
+      try {
+        searching.value = true
+        searchError.value = ''
+        suggestions.value = await suggestAddresses(trimmed, 5)
+        if (suggestions.value.length === 0) {
+          searchError.value = 'No matches found for that address.'
+        }
+      } catch {
+        searchError.value = 'Something went wrong while searching for that address.'
+        suggestions.value = []
+      } finally {
+        searching.value = false
+      }
+    }, 350)
+  }
+)
+
+async function applyResult(result: GeocodeResult) {
+  center.value = { lat: result.lat, lng: result.lng }
+  userPosition.value = { lat: result.lat, lng: result.lng }
+  searchQuery.value = result.displayName
+  suggestions.value = []
+}
+
+async function lookupAddress() {
+  const q = searchQuery.value.trim()
+  if (!q) return
+  if (suggestions.value.length > 0) {
+    const first = suggestions.value[0]
+    if (!first) return
+    await applyResult(first)
+    return
+  }
+  searchError.value = ''
+  searching.value = true
+  try {
+    const result = await geocodeAddress(q)
+    if (!result) {
+      searchError.value = 'Could not find that address.'
+      return
+    }
+    await applyResult(result)
+  } catch {
+    searchError.value = 'Something went wrong while looking up that address.'
+  } finally {
+    searching.value = false
+  }
+}
 </script>
 
 <template>
   <div class="map-view">
     <div class="map-toolbar">
       <RadiusFilter v-model="radiusKm" :disabled="!mapReady" />
+      <div class="map-search">
+        <input
+          v-model="searchQuery"
+          type="text"
+          class="map-search-input"
+          placeholder="Search by address…"
+          :disabled="!mapReady"
+          @keydown.enter.prevent="lookupAddress"
+        />
+        <button
+          type="button"
+          class="map-search-btn"
+          :disabled="!mapReady || !searchQuery.trim() || searching"
+          @click="lookupAddress"
+        >
+          {{ searching ? 'Searching…' : 'Use' }}
+        </button>
+      </div>
+      <ul v-if="suggestions.length" class="map-search-suggestions">
+        <li
+          v-for="s in suggestions"
+          :key="`${s.lat}-${s.lng}-${s.displayName}`"
+          class="map-search-suggestion"
+          @click="applyResult(s)"
+        >
+          {{ s.displayName }}
+        </li>
+      </ul>
+      <p v-if="searchError" class="map-search-error">{{ searchError }}</p>
     </div>
     <div class="map-wrap">
       <MapCanvas
@@ -97,6 +195,72 @@ function onMessage(post: Post) {
   background: var(--surface-elevated);
   border-bottom: 1px solid var(--border);
   flex-shrink: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.map-search {
+  display: flex;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 0;
+  justify-content: flex-end;
+}
+
+.map-search-input {
+  flex: 1;
+  max-width: 260px;
+  padding: 0.45rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+
+.map-search-btn {
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  border: none;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+}
+
+.map-search-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.map-search-suggestions {
+  list-style: none;
+  margin: 0;
+  padding: 0.25rem 0 0;
+  width: 100%;
+  max-height: 220px;
+  overflow-y: auto;
+  font-size: 0.85rem;
+}
+
+.map-search-suggestion {
+  padding: 0.25rem 0;
+  cursor: pointer;
+}
+
+.map-search-suggestion + .map-search-suggestion {
+  border-top: 1px solid var(--border-subtle);
+}
+
+.map-search-suggestion:hover {
+  color: var(--accent);
+}
+
+.map-search-error {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #b91c1c;
 }
 
 .map-wrap {

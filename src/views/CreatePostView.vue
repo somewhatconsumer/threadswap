@@ -140,7 +140,7 @@ async function submit() {
 
         <div class="field">
           <label class="label">Location</label>
-          <p class="hint">Drag the pin on the map to set where you're swapping from.</p>
+          <p class="hint">Drag the pin on the map or start typing an address to set where you're swapping from.</p>
           <LocationMapPicker v-model="location" v-model:address-label="addressLabel" />
           <input
             v-model="addressLabel"
